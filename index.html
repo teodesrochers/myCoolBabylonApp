@@ -65,11 +65,7 @@
     // This creates a basic Babylon Scene object (non-mesh)
     var scene = new BABYLON.Scene(engine);
 
-    // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-
-    // This targets the camera to scene origin
-    camera.setTarget(BABYLON.Vector3.Zero());
+    var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(65), 10, BABYLON.Vector3.Zero(), scene);
 
     // This attaches the camera to the canvas
     camera.attachControl(canvas, true);
@@ -80,42 +76,20 @@
     // Default intensity is 1. Let's dim the light a small amount
     light.intensity = 0.7;
 
-    // Our built-in 'sphere' shape.
-    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
-
-    // Move the sphere upward 1/2 its height
-    sphere.position.y = 1;
-
     // Our built-in 'ground' shape.
     var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
-
-    // Add material to the ground
-    var groundMaterial = new BABYLON.StandardMaterial("Ground Material", scene);
-    groundMaterial.diffuseColor = BABYLON.Color3.Red(); // Change color to red
+    let groundMaterial = new BABYLON.StandardMaterial("Ground Material", scene);
     ground.material = groundMaterial;
+    let groundTexture = new BABYLON.Texture(Assets.textures.checkerboard_basecolor_png.path, scene);
+    groundMaterial.diffuseColor = BABYLON.Color3.Red();
+    ground.material.diffuseTexture = groundTexture;
 
-    // Add texture to the ground
-    var groundTexture = new BABYLON.Texture("https://playground.babylonjs.com/textures/checkerboard.png", scene);
-    groundMaterial.diffuseTexture = groundTexture;
-
-    // Import a mesh (example uses a Yeti model from Babylon.js)
-    BABYLON.SceneLoader.ImportMesh("", "https://models.babylonjs.com/", "Yeti.babylon", scene, function (newMeshes) {
-        var importedMesh = newMeshes[0];
-        importedMesh.scaling = new BABYLON.Vector3(0.1, 0.1, 0.1); // Scale down the mesh
-        importedMesh.position.y = 1; // Adjust position
+    BABYLON.SceneLoader.ImportMesh("", Assets.meshes.Yeti.rootUrl, Assets.meshes.Yeti.filename, scene, function(newMeshes){
+        newMeshes[0].scaling = new BABYLON.Vector3(0.1, 0.1, 0.1);
     });
-
-    // Switch to ArcRotateCamera for better interaction
-    var arcCamera = new BABYLON.ArcRotateCamera("arcCamera", Math.PI / 2, Math.PI / 4, 10, BABYLON.Vector3.Zero(), scene);
-    arcCamera.attachControl(canvas, true);
-
-    // Optional: remove the free camera if no longer needed
-    scene.activeCamera = arcCamera;
 
     return scene;
 };
-
-
                 window.initFunction = async function() {
                     
                     
